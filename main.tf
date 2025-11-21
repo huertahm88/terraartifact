@@ -10,6 +10,6 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "resourcegroup-test-tbd-30"
+  name     = "resourcegroup-test-tbd-50"
   location = "centralus"
 }
