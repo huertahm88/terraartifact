@@ -9,39 +9,20 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  subscription: Azure subscription 1(e4a62254-665a-40a0-a59c-3c45d4e00d77)
-  resourceGroup: rg-terraform
-  storageAccount: hhjstagestorage
-  container: state
-  tfstateFile: terraform2.tfstate
-  anyTfChanges: false
-
 steps:
-- task: TerraformInstaller@1
-  inputs:
-    terraformVersion: 'latest'
 
-- task: TerraformTask@5
+- task: CopyFiles@2
   inputs:
-    provider: 'azurerm'
-    command: 'init'
-    backendAzureRmUseEntraIdForAuthentication: false
-    backendServiceArm: '$(subscription)'
-    backendAzureRmResourceGroupName: '$(resourceGroup)'
-    backendAzureRmStorageAccountName: '$(storageAccount)'
-    backendAzureRmContainerName: '$(container)'
-    backendAzureRmKey: '$(tfstateFile)'
+    SourceFolder: '$(System.DefaultWorkingDirectory)'
+    Contents: '**'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    CleanTargetFolder: true
+    OverWrite: true
 
-- task: TerraformTask@5
+- task: PublishBuildArtifacts@1
   inputs:
-    provider: 'azurerm'
-    command: 'plan'
-    environmentServiceNameAzureRM: '$(subscription)'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+
  
-
-- task: TerraformTask@5
-  inputs:
-    provider: 'azurerm'
-    command: 'apply'
-    environmentServiceNameAzureRM: '$(subscription)'
